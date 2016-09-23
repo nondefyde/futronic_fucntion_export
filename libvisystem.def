@@ -1,0 +1,6 @@
+EXPORTS
+    HelloWorld @1
+    PrintErrorMessage @2
+    ReadTemplateFile @3
+    SaveBmpFile @4
+    SaveTemplateFile @5
