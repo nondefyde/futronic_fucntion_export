@@ -419,403 +419,403 @@ FILENAME* GetDirectoryFileList( char* dir, int* fileCount )
     return res;
 }
 
-//int CaprureImage( FTRHANDLE dev, char* save_file_name, PFTRSCAN_IMAGE_SIZE img_size )
-//{
-//    int res = 0;
-//    int i = 0;
-//    FTR_BYTE* picture_buffer = NULL;
-//
-//    picture_buffer = (FTR_BYTE*)malloc( img_size->nImageSize );
-//
-//    if( !picture_buffer )
-//    {
-//        printf( "CaprureImage: memory allocation error!\n" );
-//        return res;
-//    }
-//
-//	printf( "CaprureImage: Put finger to scanner\n" );
-//    
-//    for( ; ; )
-//    {
-//        long start_time = GetTimeMS();
-//        FTR_BOOL ret = ftrAnsiSdkCaptureImage( dev, picture_buffer );
-//
-//        if( ret )
-//        {
-//            printf( "Capture image done. Time: %lu ms\n", GetTimeMS() - start_time ); 
-//
-//            if( SaveBmpFile( save_file_name, picture_buffer, img_size->nWidth, img_size->nHeight ) )
-//            {
-//                 printf( "Save image to %s done\n", save_file_name );
-//                 res = 1;
-//            }
-//            else
-//            {
-//                printf( "CaprureImage: failed to save image to file\n" );
-//            }
-//            break;
-//        }
-//        else
-//        {
-//            FTR_DWORD dwError = ftrScanGetLastError();
-//            if( dwError != FTR_ERROR_EMPTY_FRAME && dwError != FTR_ERROR_NO_FRAME && dwError != FTR_ERROR_MOVABLE_FINGER )
-//            {
-//                PrintErrorMessage( dwError );
-//                break;
-//            }
-//        }
-//
-//        SimulateDelay();
-//    }
-//    
-//    free( picture_buffer );
-//    return res;
-//}
-//
-//int CreateTemplate( FTRHANDLE dev, char* save_file_name, PFTRSCAN_IMAGE_SIZE img_size )
-//{
-//    int res = 0;
-//    int i = 0;
-//    FTR_BYTE* picture_buffer = NULL;
-//    FTR_BYTE* template_buffer = NULL;
-//
-//    picture_buffer = (FTR_BYTE*)malloc( img_size->nImageSize );
-//
-//    if( !picture_buffer )
-//    {
-//        printf( "CreateTemplate: memory allocation error!\n" );
-//        return res;
-//    }
-//
-//    template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
-//
-//    if( !template_buffer )
-//    {
-//        printf( "CreateTemplate: memory allocation error!\n" );
-//        free( picture_buffer );
-//        return res;
-//    }
-//
-//	printf( "CreateTemplate: Put finger to scanner\n" );
-//    
-//    for( ; ; )
-//    {
-//        int template_size = 0;
-//        long start_time = GetTimeMS();
-//        
-//        FTR_BOOL ret = ftrAnsiSdkCreateTemplate( dev, FTR_ANSISDK_FINGPOS_UK, picture_buffer, template_buffer, &template_size );
-//
-//        if( ret )
-//        {
-//            printf( "Create template done. Time: %lu ms\n", GetTimeMS() - start_time );
-//
-//            if( SaveTemplateFile( save_file_name, template_buffer, template_size ) )
-//            {
-//                printf( "Save template to %s done.\n", save_file_name );
-//                res = 1;
-//            }
-//            else
-//            {
-//                printf( "CreateTemplate: failed to save template to file\n" );
-//            }
-//            break;
-//        }
-//        else
-//        {
-//            FTR_DWORD dwError = ftrScanGetLastError();
-//            if( dwError != FTR_ERROR_EMPTY_FRAME && dwError != FTR_ERROR_NO_FRAME && dwError != FTR_ERROR_MOVABLE_FINGER )
-//            {
-//                PrintErrorMessage( dwError );
-//                break;
-//            }
-//        }
-//
-//        SimulateDelay();
-//    }
-//
-//    free( template_buffer );
-//    free( picture_buffer );
-//    return res;
-//}
-//
-//int VerifyTemplate( FTRHANDLE dev, char* tmpl_file_name, PFTRSCAN_IMAGE_SIZE img_size )
-//{
-//    int res = 0;
-//    int i = 0;
-//    FTR_BYTE* picture_buffer = NULL;
-//    FTR_BYTE* template_buffer = NULL;
-//
-//    picture_buffer = (FTR_BYTE*)malloc( img_size->nImageSize );
-//
-//    if( !picture_buffer )
-//    {
-//        printf( "VerifyTemplate: memory allocation error!\n" );
-//        return res;
-//    }
-//
-//    template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
-//
-//    if( !template_buffer )
-//    {
-//        printf( "VerifyTemplate: memory allocation error!\n" );
-//        free( picture_buffer );
-//        return res;
-//    }
-//
-//    if( ReadTemplateFile( tmpl_file_name, template_buffer, ftrAnsiSdkGetMaxTemplateSize() ) > 0 )
-//    {
-//        printf( "VerifyTemplate: Put finger to scanner\n" );
-//        for( ; ; )
-//        {
-//            float vrf_res = 0;
-//            long start_time = GetTimeMS();
-//
-//            FTR_BOOL ret = ftrAnsiSdkVerifyTemplate( dev, FTR_ANSISDK_FINGPOS_UK, template_buffer, picture_buffer, &vrf_res );
-//
-//            if( ret )
-//            {
-//                printf( "Verify template done. Result: %f. Time: %lu ms\n", vrf_res, GetTimeMS()-start_time );
-//                res = 1;
-//                break;
-//            }
-//            else
-//            {
-//                FTR_DWORD dwError = ftrScanGetLastError();
-//                if( dwError != FTR_ERROR_EMPTY_FRAME && dwError != FTR_ERROR_NO_FRAME && dwError != FTR_ERROR_MOVABLE_FINGER )
-//                {
-//                    PrintErrorMessage( dwError );
-//                    break;
-//                }
-//            }
-//
-//            SimulateDelay();
-//        }
-//    }
-//    else
-//    {
-//        printf( "VerifyTemplate: failed to read template\n" );
-//    }
-//
-//    free( template_buffer );
-//    free( picture_buffer );
-//
-//    return res;
-//}
-//
-//int ConvertTemplate( char* ansi_tmpl_file_name, char* iso_tmpl_file_name )
-//{
-//    int res = 0;
-//    FTR_BYTE* ansi_template_buffer = NULL;
-//    FTR_BYTE* iso_template_buffer = NULL;
-//    int iso_template_length = 0;
-//
-//    ansi_template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
-//    if( !ansi_template_buffer )
-//    {
-//        printf( "ConvertTemplate: memory allocation error!\n" );
-//        return res;
-//    }
-//
-//    if( ReadTemplateFile( ansi_tmpl_file_name, ansi_template_buffer, ftrAnsiSdkGetMaxTemplateSize() ) > 0 )
-//    {
-//        FTR_DWORD error = 0;
-//        FTR_BOOL ftr_res = ftrAnsiSdkConvertAnsiTemplateToIso( ansi_template_buffer, NULL, &iso_template_length );
-//        error = ftrScanGetLastError();
-//        if( !ftr_res && FTR_ANSISDK_ERROR_MORE_DATA == error )
-//        {
-//            iso_template_buffer = (FTR_BYTE*)malloc( iso_template_length );
-//            if( iso_template_buffer )
-//            {
-//                if( ftrAnsiSdkConvertAnsiTemplateToIso( ansi_template_buffer, iso_template_buffer, &iso_template_length ) )
-//                {
-//                    if( SaveTemplateFile( iso_tmpl_file_name, iso_template_buffer, iso_template_length ) )
-//                    {
-//                        printf( "Convert template to %s done.\n", iso_tmpl_file_name );
-//                        res = 1;
-//                    }
-//                    else
-//                    {
-//                        printf( "ConvertTemplate: failed to save template to file\n" );
-//                    }
-//                }
-//                else
-//                {
-//                    error = ftrScanGetLastError();
-//                    printf( "ConvertTemplate: failed to convert template. Error: %u\n", (unsigned int)error );
-//                }
-//            }
-//            else
-//            {
-//                printf( "ConvertTemplate: memory allocation error!\n" );
-//            }
-//        }
-//        else
-//        {
-//            printf( "ConvertTemplate: failed to check ANSI template. Error: %u\n", (unsigned int)error );
-//        }
-//    }
-//    else
-//    {
-//        printf( "ConvertTemplate: failed to read template\n" );
-//    }
-//
-//    if( iso_template_buffer )
-//    {
-//        free( iso_template_buffer );
-//    }
-//
-//    free( ansi_template_buffer );
-//
-//    return res;
-//}
-//
-//int IdentifyTemplate( FTRHANDLE dev, char* tmpl_dir_name, PFTRSCAN_IMAGE_SIZE img_size )
-//{
-//    int res = 0;
-//    int i = 0;
-//    FTR_BYTE* picture_buffer = NULL;
-//    FTR_BYTE* template_buffer = NULL;
-//    FTR_BYTE* base_template_buffer = NULL;
-//
-//    picture_buffer = (FTR_BYTE*)malloc( img_size->nImageSize );
-//
-//    if( !picture_buffer )
-//    {
-//        printf( "IdentifyTemplate: memory allocation error!\n" );
-//        return res;
-//    }
-//
-//    template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
-//
-//    if( !template_buffer )
-//    {
-//        printf( "IdentifyTemplate: memory allocation error!\n" );
-//        free( picture_buffer );
-//        return res;
-//    }
-//
-//    base_template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
-//
-//    if( !base_template_buffer )
-//    {
-//        printf( "IdentifyTemplate: memory allocation error!\n" );
-//        free( picture_buffer );
-//        free(template_buffer);
-//        return res;
-//    }
-//
-//    printf( "IdentifyTemplate: Put finger to scanner\n" );
-//
-//    for(;;)
-//    {
-//        int template_size = 0;
-//        long start_time = GetTimeMS();
-//
-//        FTR_BOOL ret = ftrAnsiSdkCreateTemplate( dev, FTR_ANSISDK_FINGPOS_UK, picture_buffer, base_template_buffer, &template_size );
-//
-//        if( ret )
-//        {
-//            FILENAME* file_list;
-//            int file_count = 0;
-//            int file_index = 0;
-//            int found = 0;
-//            
-//            printf( "Create template done. Time: %lu ms\n", GetTimeMS() - start_time );
-//                        
-//            file_list = GetDirectoryFileList(tmpl_dir_name,&file_count);
-//
-//            if(!file_list)
-//            {
-//                 printf( "IdentifyTemplate: Can't get directory content\n" );
-//                 break;
-//            }
-//
-//            if(0 == file_count)
-//            {
-//                printf( "IdentifyTemplate: Can't find templates in directory\n" );
-//                free(file_list);
-//                break;
-//            }
-//
-//            start_time = GetTimeMS();
-//            for(file_index = 0; file_index < file_count; file_index++)
-//            {
-//                char full_file_name[256];
-//                strcpy(full_file_name, tmpl_dir_name);
-//#if defined(FTR_OS_UNIX)
-//                strcat(full_file_name, "/");
-//#else
-//                strcat(full_file_name, "\\");
-//#endif
-//                strcat(full_file_name,file_list[file_index]);
-//
-//                if( ReadTemplateFile( full_file_name, template_buffer, ftrAnsiSdkGetMaxTemplateSize() ) > 0 )
-//                {
-//                    float mres = 0;
-//                    long start_time = GetTimeMS();
-//
-//                    FTR_BOOL ret = ftrAnsiSdkMatchTemplates( base_template_buffer, template_buffer, &mres );
-//
-//                    if( ret && mres > FTR_ANSISDK_MATCH_SCORE_MEDIUM )
-//                    {
-//                        printf( "Template found. Template name: %s. Result: %f. Time: %lu ms\n", file_list[file_index], mres, GetTimeMS()-start_time );
-//                        res = 1;
-//                        break;
-//                    }
-//                }
-//                else
-//                {
-//                     printf( "IdentifyTemplate: Failed to read template file %s\n", full_file_name );
-//                }
-//            }
-//                      
-//            free(file_list);
-//            break;
-//        }
-//        else
-//        {
-//            FTR_DWORD dwError = ftrScanGetLastError();
-//            if( dwError != FTR_ERROR_EMPTY_FRAME && dwError != FTR_ERROR_NO_FRAME && dwError != FTR_ERROR_MOVABLE_FINGER )
-//            {
-//                PrintErrorMessage( dwError );
-//                break;
-//            }
-//        }
-//
-//        SimulateDelay();
-//    }
-//
-//    free(base_template_buffer);
-//    free( template_buffer );
-//    free( picture_buffer );
-//    return res;
-//}
-//
-//int OpenDevice( FTRHANDLE *dev, FTRSCAN_IMAGE_SIZE * image_size )
-//{
-//    int res = 0;
-//    *dev = ftrScanOpenDevice();
-//
-//    if( *dev == NULL )
-//    {
-//        printf( "Failed to open device! Error: 0x%lx\n", ftrScanGetLastError() );
-//        return res;
-//    }
-//
-//    printf( "Open device done\n" );
-//
-//    if( !ftrScanGetImageSize( *dev, image_size ) )
-//    {
-//        printf( "Failed to get image size. Error: 0x%lx\n", ftrScanGetLastError() );
-//        ftrScanCloseDevice( *dev );
-//        return res;
-//    }
-//
-//    printf( "Image %dx%d size is %d\n", image_size->nWidth, image_size->nHeight, image_size->nImageSize );
-//    res = 1;
-//
-//    return res;
-//}
+int CaprureImage( FTRHANDLE dev, char* save_file_name, PFTRSCAN_IMAGE_SIZE img_size )
+{
+    int res = 0;
+    int i = 0;
+    FTR_BYTE* picture_buffer = NULL;
+
+    picture_buffer = (FTR_BYTE*)malloc( img_size->nImageSize );
+
+    if( !picture_buffer )
+    {
+        printf( "CaprureImage: memory allocation error!\n" );
+        return res;
+    }
+
+	printf( "CaprureImage: Put finger to scanner\n" );
+    
+    for( ; ; )
+    {
+        long start_time = GetTimeMS();
+        FTR_BOOL ret = ftrAnsiSdkCaptureImage( dev, picture_buffer );
+
+        if( ret )
+        {
+            printf( "Capture image done. Time: %lu ms\n", GetTimeMS() - start_time ); 
+
+            if( SaveBmpFile( save_file_name, picture_buffer, img_size->nWidth, img_size->nHeight ) )
+            {
+                 printf( "Save image to %s done\n", save_file_name );
+                 res = 1;
+            }
+            else
+            {
+                printf( "CaprureImage: failed to save image to file\n" );
+            }
+            break;
+        }
+        else
+        {
+            FTR_DWORD dwError = ftrScanGetLastError();
+            if( dwError != FTR_ERROR_EMPTY_FRAME && dwError != FTR_ERROR_NO_FRAME && dwError != FTR_ERROR_MOVABLE_FINGER )
+            {
+                PrintErrorMessage( dwError );
+                break;
+            }
+        }
+
+        SimulateDelay();
+    }
+    
+    free( picture_buffer );
+    return res;
+}
+
+int CreateTemplate( FTRHANDLE dev, char* save_file_name, PFTRSCAN_IMAGE_SIZE img_size )
+{
+    int res = 0;
+    int i = 0;
+    FTR_BYTE* picture_buffer = NULL;
+    FTR_BYTE* template_buffer = NULL;
+
+    picture_buffer = (FTR_BYTE*)malloc( img_size->nImageSize );
+
+    if( !picture_buffer )
+    {
+        printf( "CreateTemplate: memory allocation error!\n" );
+        return res;
+    }
+
+    template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
+
+    if( !template_buffer )
+    {
+        printf( "CreateTemplate: memory allocation error!\n" );
+        free( picture_buffer );
+        return res;
+    }
+
+	printf( "CreateTemplate: Put finger to scanner\n" );
+    
+    for( ; ; )
+    {
+        int template_size = 0;
+        long start_time = GetTimeMS();
+        
+        FTR_BOOL ret = ftrAnsiSdkCreateTemplate( dev, FTR_ANSISDK_FINGPOS_UK, picture_buffer, template_buffer, &template_size );
+
+        if( ret )
+        {
+            printf( "Create template done. Time: %lu ms\n", GetTimeMS() - start_time );
+
+            if( SaveTemplateFile( save_file_name, template_buffer, template_size ) )
+            {
+                printf( "Save template to %s done.\n", save_file_name );
+                res = 1;
+            }
+            else
+            {
+                printf( "CreateTemplate: failed to save template to file\n" );
+            }
+            break;
+        }
+        else
+        {
+            FTR_DWORD dwError = ftrScanGetLastError();
+            if( dwError != FTR_ERROR_EMPTY_FRAME && dwError != FTR_ERROR_NO_FRAME && dwError != FTR_ERROR_MOVABLE_FINGER )
+            {
+                PrintErrorMessage( dwError );
+                break;
+            }
+        }
+
+        SimulateDelay();
+    }
+
+    free( template_buffer );
+    free( picture_buffer );
+    return res;
+}
+
+int VerifyTemplate( FTRHANDLE dev, char* tmpl_file_name, PFTRSCAN_IMAGE_SIZE img_size )
+{
+    int res = 0;
+    int i = 0;
+    FTR_BYTE* picture_buffer = NULL;
+    FTR_BYTE* template_buffer = NULL;
+
+    picture_buffer = (FTR_BYTE*)malloc( img_size->nImageSize );
+
+    if( !picture_buffer )
+    {
+        printf( "VerifyTemplate: memory allocation error!\n" );
+        return res;
+    }
+
+    template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
+
+    if( !template_buffer )
+    {
+        printf( "VerifyTemplate: memory allocation error!\n" );
+        free( picture_buffer );
+        return res;
+    }
+
+    if( ReadTemplateFile( tmpl_file_name, template_buffer, ftrAnsiSdkGetMaxTemplateSize() ) > 0 )
+    {
+        printf( "VerifyTemplate: Put finger to scanner\n" );
+        for( ; ; )
+        {
+            float vrf_res = 0;
+            long start_time = GetTimeMS();
+
+            FTR_BOOL ret = ftrAnsiSdkVerifyTemplate( dev, FTR_ANSISDK_FINGPOS_UK, template_buffer, picture_buffer, &vrf_res );
+
+            if( ret )
+            {
+                printf( "Verify template done. Result: %f. Time: %lu ms\n", vrf_res, GetTimeMS()-start_time );
+                res = 1;
+                break;
+            }
+            else
+            {
+                FTR_DWORD dwError = ftrScanGetLastError();
+                if( dwError != FTR_ERROR_EMPTY_FRAME && dwError != FTR_ERROR_NO_FRAME && dwError != FTR_ERROR_MOVABLE_FINGER )
+                {
+                    PrintErrorMessage( dwError );
+                    break;
+                }
+            }
+
+            SimulateDelay();
+        }
+    }
+    else
+    {
+        printf( "VerifyTemplate: failed to read template\n" );
+    }
+
+    free( template_buffer );
+    free( picture_buffer );
+
+    return res;
+}
+
+int ConvertTemplate( char* ansi_tmpl_file_name, char* iso_tmpl_file_name )
+{
+    int res = 0;
+    FTR_BYTE* ansi_template_buffer = NULL;
+    FTR_BYTE* iso_template_buffer = NULL;
+    int iso_template_length = 0;
+
+    ansi_template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
+    if( !ansi_template_buffer )
+    {
+        printf( "ConvertTemplate: memory allocation error!\n" );
+        return res;
+    }
+
+    if( ReadTemplateFile( ansi_tmpl_file_name, ansi_template_buffer, ftrAnsiSdkGetMaxTemplateSize() ) > 0 )
+    {
+        FTR_DWORD error = 0;
+        FTR_BOOL ftr_res = ftrAnsiSdkConvertAnsiTemplateToIso( ansi_template_buffer, NULL, &iso_template_length );
+        error = ftrScanGetLastError();
+        if( !ftr_res && FTR_ANSISDK_ERROR_MORE_DATA == error )
+        {
+            iso_template_buffer = (FTR_BYTE*)malloc( iso_template_length );
+            if( iso_template_buffer )
+            {
+                if( ftrAnsiSdkConvertAnsiTemplateToIso( ansi_template_buffer, iso_template_buffer, &iso_template_length ) )
+                {
+                    if( SaveTemplateFile( iso_tmpl_file_name, iso_template_buffer, iso_template_length ) )
+                    {
+                        printf( "Convert template to %s done.\n", iso_tmpl_file_name );
+                        res = 1;
+                    }
+                    else
+                    {
+                        printf( "ConvertTemplate: failed to save template to file\n" );
+                    }
+                }
+                else
+                {
+                    error = ftrScanGetLastError();
+                    printf( "ConvertTemplate: failed to convert template. Error: %u\n", (unsigned int)error );
+                }
+            }
+            else
+            {
+                printf( "ConvertTemplate: memory allocation error!\n" );
+            }
+        }
+        else
+        {
+            printf( "ConvertTemplate: failed to check ANSI template. Error: %u\n", (unsigned int)error );
+        }
+    }
+    else
+    {
+        printf( "ConvertTemplate: failed to read template\n" );
+    }
+
+    if( iso_template_buffer )
+    {
+        free( iso_template_buffer );
+    }
+
+    free( ansi_template_buffer );
+
+    return res;
+}
+
+int IdentifyTemplate( FTRHANDLE dev, char* tmpl_dir_name, PFTRSCAN_IMAGE_SIZE img_size )
+{
+    int res = 0;
+    int i = 0;
+    FTR_BYTE* picture_buffer = NULL;
+    FTR_BYTE* template_buffer = NULL;
+    FTR_BYTE* base_template_buffer = NULL;
+
+    picture_buffer = (FTR_BYTE*)malloc( img_size->nImageSize );
+
+    if( !picture_buffer )
+    {
+        printf( "IdentifyTemplate: memory allocation error!\n" );
+        return res;
+    }
+
+    template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
+
+    if( !template_buffer )
+    {
+        printf( "IdentifyTemplate: memory allocation error!\n" );
+        free( picture_buffer );
+        return res;
+    }
+
+    base_template_buffer = (FTR_BYTE*)malloc( ftrAnsiSdkGetMaxTemplateSize() );
+
+    if( !base_template_buffer )
+    {
+        printf( "IdentifyTemplate: memory allocation error!\n" );
+        free( picture_buffer );
+        free(template_buffer);
+        return res;
+    }
+
+    printf( "IdentifyTemplate: Put finger to scanner\n" );
+
+    for(;;)
+    {
+        int template_size = 0;
+        long start_time = GetTimeMS();
+
+        FTR_BOOL ret = ftrAnsiSdkCreateTemplate( dev, FTR_ANSISDK_FINGPOS_UK, picture_buffer, base_template_buffer, &template_size );
+
+        if( ret )
+        {
+            FILENAME* file_list;
+            int file_count = 0;
+            int file_index = 0;
+            int found = 0;
+            
+            printf( "Create template done. Time: %lu ms\n", GetTimeMS() - start_time );
+                        
+            file_list = GetDirectoryFileList(tmpl_dir_name,&file_count);
+
+            if(!file_list)
+            {
+                 printf( "IdentifyTemplate: Can't get directory content\n" );
+                 break;
+            }
+
+            if(0 == file_count)
+            {
+                printf( "IdentifyTemplate: Can't find templates in directory\n" );
+                free(file_list);
+                break;
+            }
+
+            start_time = GetTimeMS();
+            for(file_index = 0; file_index < file_count; file_index++)
+            {
+                char full_file_name[256];
+                strcpy(full_file_name, tmpl_dir_name);
+#if defined(FTR_OS_UNIX)
+                strcat(full_file_name, "/");
+#else
+                strcat(full_file_name, "\\");
+#endif
+                strcat(full_file_name,file_list[file_index]);
+
+                if( ReadTemplateFile( full_file_name, template_buffer, ftrAnsiSdkGetMaxTemplateSize() ) > 0 )
+                {
+                    float mres = 0;
+                    long start_time = GetTimeMS();
+
+                    FTR_BOOL ret = ftrAnsiSdkMatchTemplates( base_template_buffer, template_buffer, &mres );
+
+                    if( ret && mres > FTR_ANSISDK_MATCH_SCORE_MEDIUM )
+                    {
+                        printf( "Template found. Template name: %s. Result: %f. Time: %lu ms\n", file_list[file_index], mres, GetTimeMS()-start_time );
+                        res = 1;
+                        break;
+                    }
+                }
+                else
+                {
+                     printf( "IdentifyTemplate: Failed to read template file %s\n", full_file_name );
+                }
+            }
+                      
+            free(file_list);
+            break;
+        }
+        else
+        {
+            FTR_DWORD dwError = ftrScanGetLastError();
+            if( dwError != FTR_ERROR_EMPTY_FRAME && dwError != FTR_ERROR_NO_FRAME && dwError != FTR_ERROR_MOVABLE_FINGER )
+            {
+                PrintErrorMessage( dwError );
+                break;
+            }
+        }
+
+        SimulateDelay();
+    }
+
+    free(base_template_buffer);
+    free( template_buffer );
+    free( picture_buffer );
+    return res;
+}
+
+int OpenDevice( FTRHANDLE *dev, FTRSCAN_IMAGE_SIZE * image_size )
+{
+    int res = 0;
+    *dev = ftrScanOpenDevice();
+
+    if( *dev == NULL )
+    {
+        printf( "Failed to open device! Error: 0x%lx\n", ftrScanGetLastError() );
+        return res;
+    }
+
+    printf( "Open device done\n" );
+
+    if( !ftrScanGetImageSize( *dev, image_size ) )
+    {
+        printf( "Failed to get image size. Error: 0x%lx\n", ftrScanGetLastError() );
+        ftrScanCloseDevice( *dev );
+        return res;
+    }
+
+    printf( "Image %dx%d size is %d\n", image_size->nWidth, image_size->nHeight, image_size->nImageSize );
+    res = 1;
+
+    return res;
+}
 
 
 
